@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard - Vanshidhar Petroleum HPCL Pansa</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f5f9;color:#172033;font-family:Arial,system-ui,sans-serif}
+header{background:#0b4f91;color:#fff;padding:14px;position:sticky;top:0;z-index:20}
+h1{font-size:18px;margin:0;font-weight:800}.sub{font-size:12px;opacity:.9;margin-top:3px}
+header a{color:#fff;font-size:12px}
+nav{background:#fff;border-bottom:1px solid #dce3ec;padding:8px;display:flex;gap:7px;overflow:auto;position:sticky;top:62px;z-index:19}
+nav button{border:1px solid #d7e0ea;background:#f7f9fc;border-radius:18px;padding:8px 12px;white-space:nowrap;font-weight:700;color:#26364a;cursor:pointer}
+nav button.active{background:#0b4f91;color:#fff}
+main{max-width:1300px;margin:auto;padding:12px}
+section{display:none}section.on{display:block}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center;font-size:13px}
+select{border:1px solid #d5deea;border-radius:9px;padding:8px 10px;background:#fff;font:inherit}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px}
+.card{background:#fff;border:1px solid #dce3ec;border-radius:12px;padding:12px}
+.label{font-size:11px;color:#65748a;font-weight:700}.num{font-size:20px;font-weight:800;margin-top:5px}
+.pos{color:#11793a}.neg{color:#b42318}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+.box{background:#fff;border:1px solid #dce3ec;border-radius:12px;padding:12px;margin-bottom:12px}
+.box h3{margin:0 0 8px;font-size:14px}
+.ch{position:relative;height:280px}
+.tw{overflow:auto;max-height:480px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border-bottom:1px solid #e6ebf2;padding:6px 8px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:#fff}
+th{background:#eef3f9;position:sticky;top:0}
+.note{font-size:11px;color:#65748a;margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+<h1>Vanshidhar Petroleum - HPCL Pansa | Dashboard</h1>
+<div class="sub">Analysis &amp; Charts · Data update: <span id="built"></span> · <a href="index.html">← Portal</a></div>
+</header>
+<nav>
+<button data-t="total" class="active">Total (Jul-2020 se ab tak)</button>
+<button data-t="daily">Roz ki Bikri</button>
+<button data-t="month">Mahina-wise (2020-26)</button>
+<button data-t="year">Saal-wise (FY)</button>
+<button data-t="reg">Register Aug-2026 se</button>
+</nav>
+<main>
+
+<section id="total" class="on">
+<div class="cards" id="tCards"></div>
+<div class="grid">
+<div class="box"><h3>Saal-wise Sales vs Purchase (Rs)</h3><div class="ch"><canvas id="tSP"></canvas></div></div>
+<div class="box"><h3>Saal-wise Net Profit / Loss (Rs)</h3><div class="ch"><canvas id="tNet"></canvas></div></div>
+</div>
+<div class="box"><h3>Total ka hisaab</h3><div class="tw"><table id="tTab"></table></div>
+<div class="note">Jul-2020 se Jul-2026: HPCL Reports file se. Aug-2026 se: Register file se (litre Daily Sales file se, 27 Aug se). Net = Sales - Purchase - Pump kharcha - Staff - Debit Interest (maal-kharid basis, stock nahi joda gaya). Owner / Other Party ka len-den isme nahi hai.</div></div>
+</section>
+
+<section id="daily">
+<div class="toolbar">Mahina: <select id="dSel"></select></div>
+<div class="cards" id="dCards"></div>
+<div class="grid">
+<div class="box"><h3>Roz ki bikri - Litre (MS / HSD)</h3><div class="ch"><canvas id="dLit"></canvas></div></div>
+<div class="box"><h3>Roz ki bikri - Rupaye</h3><div class="ch"><canvas id="dAmt"></canvas></div></div>
+<div class="box"><h3>Paisa kahan se aaya (Collection)</h3><div class="ch"><canvas id="dPay"></canvas></div></div>
+<div class="box"><h3>Short / Excess (Rs)</h3><div class="ch"><canvas id="dShort"></canvas></div><div class="note">Plus = zyada aaya, Minus = kam aaya</div></div>
+</div>
+<div class="box"><h3>Din-wise list</h3><div class="tw"><table id="dTab"></table></div></div>
+</section>
+
+<section id="month">
+<div class="toolbar">Saal (FY): <select id="mSel"></select></div>
+<div class="cards" id="mCards"></div>
+<div class="grid">
+<div class="box"><h3>Mahine ki bikri - Litre</h3><div class="ch"><canvas id="mLit"></canvas></div></div>
+<div class="box"><h3>Sales vs Purchase (Rs)</h3><div class="ch"><canvas id="mSP"></canvas></div></div>
+</div>
+<div class="box"><h3>Net Profit / Loss har mahina (Rs)</h3><div class="ch"><canvas id="mNet"></canvas></div><div class="note">Net = Sales - Purchase - Pump kharcha - Staff - Debit Interest (maal-kharid basis, stock nahi joda gaya). Isliye kisi mahine zyada tanker aaya to loss dikh sakta hai.</div></div>
+<div class="box"><h3>Mahina-wise list</h3><div class="tw"><table id="mTab"></table></div></div>
+</section>
+
+<section id="year">
+<div class="cards" id="yCards"></div>
+<div class="grid">
+<div class="box"><h3>Saal-wise bikri - Litre</h3><div class="ch"><canvas id="yLit"></canvas></div></div>
+<div class="box"><h3>Saal-wise Net Profit / Loss (Rs)</h3><div class="ch"><canvas id="yNet"></canvas></div></div>
+</div>
+<div class="box"><h3>Saal-wise report</h3><div class="tw"><table id="yTab"></table></div><div class="note">FY = April se March. 2020-21 me Jul-2020 se, 2026-27 me Apr-Jul 2026.</div></div>
+</section>
+
+<section id="reg">
+<div class="cards" id="rCards"></div>
+<div class="grid">
+<div class="box"><h3>Sales vs Purchase (Rs)</h3><div class="ch"><canvas id="rSP"></canvas></div></div>
+<div class="box"><h3>Kharche (Rs)</h3><div class="ch"><canvas id="rExp"></canvas></div></div>
+</div>
+<div class="box"><h3>Register Monthly Summary</h3><div class="tw"><table id="rTab"></table></div></div>
+</section>
+</main>
+
+<script>
+const D=/*DATA*/null;
+const inr=v=>(v<0?'-':'')+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN');
+const lit=v=>Math.round(v).toLocaleString('en-IN')+' L';
+const nf=v=>Math.round(v).toLocaleString('en-IN');
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const mLabel=m=>MN[+m.slice(5,7)-1]+'-'+m.slice(2,4);
+const C={ms:'#0b8a4a',hsd:'#0b4f91',amt:'#e08a00',pos:'#11793a',neg:'#c0392b',grey:'#8a97a8',purple:'#7b4fb5'};
+document.getElementById('built').textContent=D.built;
+const charts={};
+function mk(id,cfg){charts[id]&&charts[id].destroy();cfg.options=Object.assign({responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.fmt||nf)(c.raw)}}},scales:{y:{ticks:{callback:v=>nf(v)}}}},cfg.options||{});charts[id]=new Chart(document.getElementById(id),cfg);}
+function card(l,v,cls){return `<div class="card"><div class="label">${l}</div><div class="num ${cls||''}">${v}</div></div>`;}
+function table(id,head,rows){document.getElementById(id).innerHTML='<tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');}
+const pn=v=>`<span class="${v<0?'neg':'pos'}">${inr(v)}</span>`;
+const sum=(a,k)=>a.reduce((s,x)=>s+x[k],0);
+
+// tabs
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));});
+
+// TOTAL
+(function(){
+ const g=n=>(D.reg.rows.find(r=>r.name.toLowerCase().startsWith(n.toLowerCase()))||{vals:[]}).vals;
+ const rs=g('Total Sales'),rp=g('Total Fuel Purchase'),re=g('Total General'),rst=g('Total Staff'),ri=g('Total Debit Interest');
+ const S=a=>a.reduce((x,y)=>x+y,0);
+ const reg={fy:'2026-27 (Aug se)',hsd:sum(D.daily,'hsd'),ms:sum(D.daily,'ms'),sales:S(rs),purchase:S(rp),exp:S(re),staff:S(rst),interest:S(ri)};
+ reg.gross=reg.sales-reg.purchase;reg.net=reg.gross-reg.exp-reg.staff-reg.interest;
+ const yrs=D.yearly.filter(r=>r.fy!=='TOTAL').map(r=>Object.assign({},r));
+ const last=yrs.find(r=>r.fy==='2026-27');
+ const all=yrs.concat([reg]);
+ const T={};['hsd','ms','sales','purchase','gross','exp','staff','interest','net'].forEach(k=>T[k]=sum(all,k));
+ document.getElementById('tCards').innerHTML=card('Kul Sales',inr(T.sales))+card('Kul Purchase',inr(T.purchase))+card('HSD (Diesel) kul',lit(T.hsd))+card('MS (Petrol) kul',lit(T.ms))+card('Pump kharcha',inr(T.exp))+card('Staff payment',inr(T.staff))+card('Debit Interest',inr(T.interest))+card('Kul Net Profit/Loss',inr(T.net),T.net<0?'neg':'pos');
+ // chart: 2026-27 = Apr-Jul + Aug se jod kar
+ const fy=yrs.map(r=>Object.assign({},r));const l=fy.find(r=>r.fy==='2026-27');
+ if(l){['sales','purchase','net'].forEach(k=>l[k]+=reg[k]);l.fy='2026-27';}
+ const L=fy.map(r=>r.fy);
+ mk('tSP',{type:'bar',data:{labels:L,datasets:[{label:'Sales',data:fy.map(r=>r.sales),backgroundColor:C.amt,fmt:inr},{label:'Purchase',data:fy.map(r=>r.purchase),backgroundColor:C.grey,fmt:inr}]}});
+ mk('tNet',{type:'bar',data:{labels:L,datasets:[{label:'Net',data:fy.map(r=>r.net),backgroundColor:fy.map(r=>r.net<0?C.neg:C.pos),fmt:inr}]},options:{plugins:{legend:{display:false}}}});
+ table('tTab',['FY','HSD (L)','MS (L)','Sales','Purchase','Gross','Pump kharcha','Staff','Interest','Net'],all.concat([Object.assign({fy:'<b>GRAND TOTAL</b>'},T)]).map(r=>[r.fy==='2026-27'?'2026-27 (Apr-Jul)':r.fy,nf(r.hsd),nf(r.ms),inr(r.sales),inr(r.purchase),pn(r.gross),inr(r.exp),inr(r.staff),inr(r.interest),pn(r.net)]));
+})();
+
+// DAILY
+(function(){
+ const months=[...new Set(D.daily.map(r=>r.d.slice(0,7)))];
+ const sel=document.getElementById('dSel');
+ sel.innerHTML='<option value="all">Sab din</option>'+months.map(m=>`<option value="${m}">${mLabel(m)}</option>`).join('');
+ sel.value=months[months.length-1]||'all';
+ function draw(){
+  const rows=D.daily.filter(r=>sel.value==='all'||r.d.startsWith(sel.value));
+  const L=rows.map(r=>r.d.slice(8,10)+'/'+r.d.slice(5,7));
+  const n=rows.length||1;
+  document.getElementById('dCards').innerHTML=card('Din',rows.length)+card('Kul bikri',inr(sum(rows,'total')))+card('MS (Petrol)',lit(sum(rows,'ms')))+card('HSD (Diesel)',lit(sum(rows,'hsd')))+card('Roz ka average',inr(sum(rows,'total')/n))+card('Udhar (Credit)',inr(sum(rows,'credit')))+card('Short/Excess',inr(sum(rows,'short')),sum(rows,'short')<0?'neg':'pos')+card('Cash kharcha',inr(sum(rows,'kharcha')));
+  mk('dLit',{type:'bar',data:{labels:L,datasets:[{label:'MS',data:rows.map(r=>r.ms),backgroundColor:C.ms},{label:'HSD',data:rows.map(r=>r.hsd),backgroundColor:C.hsd}]},options:{scales:{x:{stacked:true},y:{stacked:true}}}});
+  mk('dAmt',{type:'line',data:{labels:L,datasets:[{label:'Total sale',data:rows.map(r=>r.total),borderColor:C.amt,backgroundColor:C.amt+'33',fill:true,tension:.25,fmt:inr}]}});
+  const pay=['cash','upi','credit','owner','party'],pl=['Cash','UPI','Udhar','Owner','Other Party'],pc=[C.ms,C.hsd,C.amt,C.purple,C.grey];
+  mk('dPay',{type:'doughnut',data:{labels:pl,datasets:[{data:pay.map(k=>sum(rows,k)),backgroundColor:pc}]},options:{scales:{},plugins:{tooltip:{callbacks:{label:c=>c.label+': '+inr(c.raw)}}}}});
+  mk('dShort',{type:'bar',data:{labels:L,datasets:[{label:'Short/Excess',data:rows.map(r=>r.short),backgroundColor:rows.map(r=>r.short<0?C.neg:C.pos),fmt:inr}]},options:{plugins:{legend:{display:false}}}});
+  table('dTab',['Date','MS (L)','HSD (L)','Total Rs','Cash','UPI','Udhar','Short/Excess','Kharcha'],rows.slice().reverse().map(r=>[r.d.split('-').reverse().join('-'),nf(r.ms),nf(r.hsd),inr(r.total),inr(r.cash),inr(r.upi),inr(r.credit),pn(r.short),inr(r.kharcha)]));
+ }
+ sel.onchange=draw;draw();
+})();
+
+// MONTHLY
+(function(){
+ const fys=[...new Set(D.monthly.map(r=>r.fy))];
+ const sel=document.getElementById('mSel');
+ sel.innerHTML='<option value="all">Sab saal (Jul-20 se Jul-26)</option>'+fys.map(f=>`<option>${f}</option>`).join('');
+ function draw(){
+  const rows=D.monthly.filter(r=>sel.value==='all'||r.fy===sel.value);
+  const L=rows.map(r=>mLabel(r.m));
+  const best=rows.reduce((a,b)=>b.hsd+b.ms>a.hsd+a.ms?b:a,rows[0]);
+  document.getElementById('mCards').innerHTML=card('Kul Sales',inr(sum(rows,'sales')))+card('Kul Purchase',inr(sum(rows,'purchase')))+card('HSD',lit(sum(rows,'hsd')))+card('MS',lit(sum(rows,'ms')))+card('Net Profit/Loss',inr(sum(rows,'net')),sum(rows,'net')<0?'neg':'pos')+card('Sabse zyada bikri',best?mLabel(best.m)+' · '+lit(best.hsd+best.ms):'-');
+  mk('mLit',{type:'bar',data:{labels:L,datasets:[{label:'HSD',data:rows.map(r=>r.hsd),backgroundColor:C.hsd},{label:'MS',data:rows.map(r=>r.ms),backgroundColor:C.ms}]},options:{scales:{x:{stacked:true},y:{stacked:true}}}});
+  mk('mSP',{type:'line',data:{labels:L,datasets:[{label:'Sales',data:rows.map(r=>r.sales),borderColor:C.amt,tension:.25,fmt:inr},{label:'Purchase',data:rows.map(r=>r.purchase),borderColor:C.grey,borderDash:[5,4],tension:.25,fmt:inr}]}});
+  mk('mNet',{type:'bar',data:{labels:L,datasets:[{label:'Net',data:rows.map(r=>r.net),backgroundColor:rows.map(r=>r.net<0?C.neg:C.pos),fmt:inr}]},options:{plugins:{legend:{display:false}}}});
+  table('mTab',['Mahina','HSD (L)','MS (L)','Sales','Purchase','Gross','Pump kharcha','Staff','Interest','Net'],rows.slice().reverse().map(r=>[mLabel(r.m),nf(r.hsd),nf(r.ms),inr(r.sales),inr(r.purchase),pn(r.gross),inr(r.exp),inr(r.staff),inr(r.interest),pn(r.net)]));
+ }
+ sel.onchange=draw;draw();
+})();
+
+// YEARLY
+(function(){
+ const rows=D.yearly.filter(r=>r.fy!=='TOTAL'),T=D.yearly.find(r=>r.fy==='TOTAL')||{};
+ const L=rows.map(r=>r.fy);
+ document.getElementById('yCards').innerHTML=card('Kul Sales (sab saal)',inr(T.sales||0))+card('HSD kul',lit(T.hsd||0))+card('MS kul',lit(T.ms||0))+card('Kul Net',inr(T.net||0),(T.net||0)<0?'neg':'pos');
+ mk('yLit',{type:'bar',data:{labels:L,datasets:[{label:'HSD',data:rows.map(r=>r.hsd),backgroundColor:C.hsd},{label:'MS',data:rows.map(r=>r.ms),backgroundColor:C.ms}]}});
+ mk('yNet',{type:'bar',data:{labels:L,datasets:[{label:'Net',data:rows.map(r=>r.net),backgroundColor:rows.map(r=>r.net<0?C.neg:C.pos),fmt:inr}]},options:{plugins:{legend:{display:false}}}});
+ table('yTab',['FY','HSD (L)','MS (L)','Sales','Purchase','Gross','Pump kharcha','Staff','Interest','Net'],D.yearly.map(r=>[r.fy==='TOTAL'?'<b>TOTAL</b>':r.fy,nf(r.hsd),nf(r.ms),inr(r.sales),inr(r.purchase),pn(r.gross),inr(r.exp),inr(r.staff),inr(r.interest),pn(r.net)]));
+})();
+
+// REGISTER
+(function(){
+ const R=D.reg,L=R.months.map(mLabel),g=n=>R.rows.find(r=>r.name.toLowerCase().startsWith(n.toLowerCase()));
+ const tot=r=>r?(r.total!=null?r.total:r.vals.reduce((a,b)=>a+b,0)):0;
+ const ks=[['Total Sales','Kul Sales'],['Total Fuel Purchase','Kul Purchase'],['Gross Profit','Gross Profit'],['Operating Profit','Operating Profit'],['Net Operational','Net Profit/Loss'],['HPCL Credit','HPCL Credit Balance']];
+ document.getElementById('rCards').innerHTML=ks.map(([k,l])=>{const r=g(k);const v=k==='HPCL Credit'&&r?r.vals[r.vals.length-1]:tot(r);return card(l,inr(v),/Profit/.test(l)?(v<0?'neg':'pos'):'');}).join('');
+ const s=g('Total Sales'),p=g('Total Fuel Purchase');
+ mk('rSP',{type:'bar',data:{labels:L,datasets:[{label:'Sales',data:s?s.vals:[],backgroundColor:C.amt,fmt:inr},{label:'Purchase',data:p?p.vals:[],backgroundColor:C.grey,fmt:inr}]}});
+ const ex=[['Total General','Pump kharcha',C.amt],['Total Staff','Staff',C.ms],['Total Debit Interest','Debit Interest',C.neg]];
+ mk('rExp',{type:'bar',data:{labels:L,datasets:ex.map(([k,l,c])=>({label:l,data:(g(k)||{vals:[]}).vals,backgroundColor:c,fmt:inr}))},options:{scales:{x:{stacked:true},y:{stacked:true}}}});
+ table('rTab',['Description',...L,'Total'],R.rows.map(r=>[r.name,...r.vals.map(inr),inr(tot(r))]));
+})();
+</script>
+</body>
+</html>
