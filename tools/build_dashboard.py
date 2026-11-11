@@ -7,7 +7,15 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def p(n): return os.path.join(ROOT, n)
 def num(v):
     return round(float(v), 2) if isinstance(v, (int, float)) else 0.0
-def wb(n): return openpyxl.load_workbook(p(n), read_only=True, data_only=True)
+import shutil, subprocess, tempfile
+_TMP = tempfile.mkdtemp()
+def wb(n):
+    # Excel formulas ko LibreOffice se dobara calculate karke padhta hai (agar LibreOffice hai)
+    out = os.path.join(_TMP, 'out', os.path.basename(n))
+    if not os.path.exists(out) and shutil.which('soffice'):
+        subprocess.run(['soffice', '--headless', '--convert-to', 'xlsx', '--outdir', os.path.join(_TMP, 'out'), p(n)],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return openpyxl.load_workbook(out if os.path.exists(out) else p(n), read_only=True, data_only=True)
 
 # 1. Daily sales (Aug-2026 se)
 daily = []
