@@ -3,7 +3,7 @@ dashboard.html (build_dashboard.py se) aur Register file se data leta hai, Repor
 import json,re,os,sys,datetime,subprocess,tempfile,shutil,openpyxl
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 s=open(os.path.join(ROOT,'dashboard.html'),encoding='utf-8').read()
-D=json.loads(re.search(r'const D=(.*?);\nconst inr',s,re.S).group(1))
+D=json.loads(re.search(r'const D=(\{.*?\});\n',s,re.S).group(1))
 def recalc(name):
     tmp=tempfile.mkdtemp(); prof=os.path.join(tmp,'prof','user'); os.makedirs(prof)
     open(os.path.join(prof,'registrymodifications.xcu'),'w').write('<?xml version="1.0" encoding="UTF-8"?><oor:items xmlns:oor="http://openoffice.org/2001/registry"><item oor:path="/org.openoffice.Office.Calc/Formula/Load"><prop oor:name="OOXMLRecalcMode" oor:op="fuse"><value>0</value></prop></item></oor:items>')

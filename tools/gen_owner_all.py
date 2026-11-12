@@ -1,8 +1,9 @@
 import json,re,openpyxl,datetime,collections
 REPO='/home/claude/vanshidhar-petroleum-hpcl-portal-01/'
-REG='/tmp/lo8/out/r.xlsx'
+import sys
+REG=sys.argv[1] if len(sys.argv)>1 else '/tmp/lo8/out/r.xlsx'
 s=open(REPO+'dashboard.html').read()
-D=json.loads(re.search(r'const D=(.*?);\nconst inr',s,re.S).group(1))
+D=json.loads(re.search(r'const D=(\{.*?\});\n',s,re.S).group(1))
 def ind(v):
     if v is None: return '-'
     neg=v<0; i=str(int(round(abs(v))))
@@ -52,7 +53,7 @@ prow=''.join(f"<tr><td>{n}</td><td>{ind(j)}</td><td>{ind(v[0]) if v else '-'}</t
 tj=sum(j for _,j,_ in rows if j); tn=sum(v[0] for _,_,v in rows if v)
 # Credit sales party-wise
 cs=collections.OrderedDict(); cnote={}
-for r in wb['Credit Sales'].iter_rows(min_row=4,max_row=31,values_only=True):
+for r in wb['Credit Sales'].iter_rows(min_row=4,max_row=61,values_only=True):
     r=list(r)+[None]*8
     if not r[1]: continue
     k=str(r[1]).strip(); k={'Gufran Kabra':'Gurfan Kabra'}.get(k,k)
