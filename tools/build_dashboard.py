@@ -13,7 +13,12 @@ def wb(n):
     # Excel formulas ko LibreOffice se dobara calculate karke padhta hai (agar LibreOffice hai)
     out = os.path.join(_TMP, 'out', os.path.basename(n))
     if not os.path.exists(out) and shutil.which('soffice'):
-        subprocess.run(['soffice', '--headless', '--convert-to', 'xlsx', '--outdir', os.path.join(_TMP, 'out'), p(n)],
+        prof = os.path.join(_TMP, 'prof', 'user'); os.makedirs(prof, exist_ok=True)
+        open(os.path.join(prof, 'registrymodifications.xcu'), 'w').write(
+            '<?xml version="1.0" encoding="UTF-8"?><oor:items xmlns:oor="http://openoffice.org/2001/registry">'
+            '<item oor:path="/org.openoffice.Office.Calc/Formula/Load"><prop oor:name="OOXMLRecalcMode" oor:op="fuse">'
+            '<value>0</value></prop></item></oor:items>')
+        subprocess.run(['soffice', '-env:UserInstallation=file://' + os.path.join(_TMP, 'prof'), '--headless', '--convert-to', 'xlsx', '--outdir', os.path.join(_TMP, 'out'), p(n)],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return openpyxl.load_workbook(out if os.path.exists(out) else p(n), read_only=True, data_only=True)
 
