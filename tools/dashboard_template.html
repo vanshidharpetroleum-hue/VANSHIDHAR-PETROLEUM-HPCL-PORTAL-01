@@ -37,7 +37,7 @@ th{background:#eef3f9;position:sticky;top:0}
 <body>
 <header>
 <h1>Vanshidhar Petroleum - HPCL Pansa | Dashboard</h1>
-<div class="sub">Analysis &amp; Charts · Data update: <span id="built"></span> · <a href="index.html">← Portal</a></div>
+<div class="sub">Analysis &amp; Charts · Data update: <span id="built"></span> · har 5 min me apne aap refresh · <a href="index.html">← Portal</a></div>
 </header>
 <nav>
 <button data-t="total" class="active">Total (Jul-2020 se ab tak)</button>
@@ -102,6 +102,8 @@ th{background:#eef3f9;position:sticky;top:0}
 
 <script>
 const D=/*DATA*/null;
+// Har 5 minute me apne aap naya data (sirf website par, internet ho to)
+if(location.protocol.startsWith('http'))setInterval(()=>{if(navigator.onLine)location.reload()},5*60*1000);
 const inr=v=>(v<0?'-':'')+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN');
 const lit=v=>Math.round(v).toLocaleString('en-IN')+' L';
 const nf=v=>Math.round(v).toLocaleString('en-IN');
