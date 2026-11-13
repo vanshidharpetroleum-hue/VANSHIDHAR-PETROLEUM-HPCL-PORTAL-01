@@ -1,0 +1,2 @@
+{"name":"Pump Dashboard - Vanshidhar Petroleum","short_name":"Pump","start_url":"wallpaper.html","scope":"./","display":"standalone","background_color":"#0b1730","theme_color":"#0b1730",
+ "icons":[{"src":"icons/pump-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"icons/pump-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
