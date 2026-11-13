@@ -68,7 +68,12 @@ keep = [idx.index(i) for i in months_used]
 reg['months'] = [hdr[i].strftime('%Y-%m') for i in months_used]
 for row in reg['rows']: row['vals'] = [row['vals'][k] for k in keep]
 
-data = dict(built=datetime.datetime.now().strftime('%d-%m-%Y %H:%M'), daily=daily, monthly=monthly, yearly=yearly, reg=reg)
+desh = {}
+for r in wb('Vanshidhar Register_Aug-2026 to _Complete.xlsx')['Deshbord'].iter_rows(min_row=3, values_only=True):
+    if r and isinstance(r[0], str) and isinstance(r[1], (int, float)): desh[r[0].strip()] = round(r[1], 2)
+data = dict(desh=desh, built=datetime.datetime.now().strftime('%d-%m-%Y %H:%M'), daily=daily, monthly=monthly, yearly=yearly, reg=reg)
 tpl = open(p('tools/dashboard_template.html'), encoding='utf-8').read()
 open(p('dashboard.html'), 'w', encoding='utf-8').write(tpl.replace('/*DATA*/null', json.dumps(data, ensure_ascii=False)))
+wtpl = open(p('tools/wallpaper_template.html'), encoding='utf-8').read()
+open(p('wallpaper.html'), 'w', encoding='utf-8').write(wtpl.replace('/*DATA*/null', json.dumps(data, ensure_ascii=False)))
 print('dashboard.html bana:', len(daily), 'din,', len(monthly), 'mahine,', len(yearly), 'saal')
