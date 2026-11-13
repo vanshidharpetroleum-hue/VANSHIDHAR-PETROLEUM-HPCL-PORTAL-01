@@ -19,15 +19,18 @@
 .box h3{margin:0 0 .8vh;font-size:1.8vh;color:#cfe0f7}.ch{position:relative;flex:1;min-height:0}
 .foot{display:flex;justify-content:space-between;font-size:1.4vh;color:#7f93b0}
 @media (orientation:portrait){html,body{overflow:auto}.wrap{height:auto;min-height:100vh;padding:2vh 3vw}.top h1{font-size:2.2vh}.grid{grid-template-columns:1fr 1fr}.k .v{font-size:2.6vh}.charts{grid-template-columns:1fr}.box{height:300px}.clock .t{font-size:3.2vh}.top{align-items:flex-start;gap:8px}}
+.lock .top,.lock .charts,.lock .foot{display:none}.lock .wrap{padding-top:34vh;grid-template-rows:auto auto;height:100vh;overflow:hidden}
+.lock .grid{grid-template-columns:1fr 1fr}.lock .k{background:rgba(19,37,74,.85)}.lock .k .v{font-size:2.9vh}.lock .lt{display:block!important;text-align:center;font-size:1.6vh;color:#9fb3cf;margin-top:1vh}
 </style></head><body><div class="wrap">
 <div class="top"><div><h1>⛽ VANSHIDHAR PETROLEUM · HPCL PANSA</h1><div class="s" id="sub"></div></div><div class="clock"><div class="t" id="t"></div><div class="d" id="d"></div></div></div>
-<div class="grid" id="kp"></div>
+<div class="grid" id="kp"></div><div class="lt" id="lt" style="display:none"></div>
 <div class="charts"><div class="box"><h3>Pichhle 14 din ki bikri (Litre)</h3><div class="ch"><canvas id="c1"></canvas></div></div>
 <div class="box"><h3>Is mahine paisa kahan se aaya</h3><div class="ch"><canvas id="c2"></canvas></div></div></div>
 <div class="foot"><span id="up"></span><span>Har 5 minute me apne aap update · DKC</span></div>
 </div>
 <script>
 const D=/*DATA*/null;
+if(location.search.includes('lock'))document.documentElement.classList.add('lock');
 if(location.protocol.startsWith('http'))setInterval(()=>{if(navigator.onLine)location.reload()},5*60*1000);
 const ind=v=>(v<0?'-':'')+Math.abs(Math.round(v)).toLocaleString('en-IN'), R=v=>(v<0?'-₹':'₹')+Math.abs(Math.round(v)).toLocaleString('en-IN');
 const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -38,7 +41,7 @@ const daily=D.daily, L=daily[daily.length-1], P=daily[daily.length-2]||L, mon=L.
 const S=(a,k)=>a.reduce((s,x)=>s+x[k],0), De=D.desh||{};
 const g=k=>{for(const key in De) if(key.toLowerCase().startsWith(k.toLowerCase())) return De[key]; return null};
 document.getElementById('sub').textContent='Aakhri DSR: '+dd(L.d)+' · Data update: '+D.built;
-document.getElementById('up').textContent='Data: '+D.built;
+document.getElementById('up').textContent='Data: '+D.built;document.getElementById('lt').textContent='⛽ Vanshidhar Petroleum · Aakhri DSR '+dd(L.d)+' · Update '+D.built;
 const ch=(a,b)=>{if(!b)return '';const p=(a-b)/b*100;return `<span class="${p>=0?'pos':'neg'}">${p>=0?'▲':'▼'} ${Math.abs(p).toFixed(0)}% kal se</span>`};
 const k=(l,v,x,c)=>`<div class="k"><div class="l">${l}</div><div class="v ${c||''}">${v}</div><div class="x">${x||''}</div></div>`;
 const sh=L.short, msh=S(M,'short'), op=g('Operating Profit'), udh=g('Credit Sale Udhar');
