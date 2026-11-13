@@ -11,6 +11,7 @@ with sync_playwright() as p:
     os.makedirs(os.path.join(ROOT,'LockScreen'),exist_ok=True)
     pg2=b.new_page(viewport={'width':1920,'height':1080})
     if local: pg2.route('**/chart.umd.min.js',lambda r:r.fulfill(path=local[0],content_type='application/javascript'))
-    pg2.goto('file://'+os.path.join(ROOT,'wallpaper.html')+'?img=1'); pg2.wait_for_timeout(800)
+    pg2.goto('file://'+os.path.join(ROOT,'dashboard.html')); pg2.wait_for_timeout(1000)
+    pg2.add_style_tag(content='header{position:static}nav{position:static}')
     pg2.screenshot(path=os.path.join(ROOT,'LockScreen','laptop_lockscreen.png')); b.close()
 print('lockscreen.png')
