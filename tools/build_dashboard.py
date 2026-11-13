@@ -77,3 +77,10 @@ open(p('dashboard.html'), 'w', encoding='utf-8').write(tpl.replace('/*DATA*/null
 wtpl = open(p('tools/wallpaper_template.html'), encoding='utf-8').read()
 open(p('wallpaper.html'), 'w', encoding='utf-8').write(wtpl.replace('/*DATA*/null', json.dumps(data, ensure_ascii=False)))
 print('dashboard.html bana:', len(daily), 'din,', len(monthly), 'mahine,', len(yearly), 'saal')
+
+# Lock screen photos bhi saath me (mobile + laptop)
+try:
+    import subprocess as _sp
+    _sp.run([__import__('sys').executable, p('tools/gen_lockscreen.py')], check=False)
+except Exception as _e:
+    print('lockscreen nahi bana:', _e)
