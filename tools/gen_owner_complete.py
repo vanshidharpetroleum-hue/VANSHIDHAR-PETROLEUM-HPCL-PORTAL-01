@@ -18,7 +18,7 @@ with sync_playwright() as p:
     cover='''<section class=cover><div class=box><div class=t1>VANSHIDHAR PETROLEUM</div><div class=t2>HPCL Pansa</div><div class=t3>OWNER REPORT</div>
 <div class=t4>Shuru (Jul-2020) se aaj (14-11-2026) tak<br>Summary · Dashboard aur Chart · Poora date-wise hisaab</div>
 <div class=t5>Shri Ashwini Kumar Singh ji (Owner) ke liye<br>Taiyar: Dharmendra Kumar Singh (Manager)</div></div>
-<div class=toc><b>Is file me:</b><ol><li>Dashboard aur Chart (5 hisse)</li><li>Owner Report Summary (Jul-2020 se ab tak)</li><li>Poora date-wise hisaab (1 Aug 2026 se 14 Nov 2026, 13 hisse)</li></ol></div></section>'''
+<div class=toc><b>Is file me:</b><ol><li>Dashboard aur Chart (5 hisse)</li><li>Owner Report Summary (Jul-2020 se ab tak)</li><li>Purana hisaab Jul-2020 se Jul-2026: mahina-wise aur har entry (bikri, kharid, kharcha, staff, byaj, owner credit/debit, other party, mobil)</li><li>Naya date-wise hisaab 1 Aug 2026 se 14 Nov 2026 (13 hisse)</li></ol></div></section>'''
     H='''<!DOCTYPE html><html><head><meta charset=utf-8><style>body{margin:0;font-family:Arial,sans-serif}section{page-break-after:always;padding:10px 16px}
 h2{color:#0d4f8b;font-size:16px;margin:4px 0 8px}img{width:100%%}.cover{height:270mm;display:flex;flex-direction:column;justify-content:center}
 .box{background:#0d4f8b;color:#fff;border-radius:14px;padding:40px;text-align:center}.t1{font-size:34px;font-weight:bold}.t2{font-size:20px;margin-top:6px}
@@ -29,7 +29,7 @@ h2{color:#0d4f8b;font-size:16px;margin:4px 0 8px}img{width:100%%}.cover{height:2
     pg2.pdf(path='dash.pdf',format='A4',print_background=True,margin={'top':'6mm','bottom':'6mm','left':'0','right':'0'})
     b.close()
 w=PdfWriter()
-for f in ['dash.pdf','/home/claude/reports/Owner_Report_14Nov2026.pdf','/home/claude/full/Owner_Report_Full_DateWise_14Nov2026.pdf']:
+for f in ['dash.pdf','/home/claude/reports/Owner_Report_14Nov2026.pdf','/home/claude/old/old.pdf','/home/claude/full/Owner_Report_Full_DateWise_14Nov2026.pdf']:
     for pgx in PdfReader(f).pages: w.add_page(pgx)
 out='Vanshidhar_Petroleum_HPCL_Pansa_Owner_Report_Complete_14Nov2026.pdf'
 w.write(out); print(len(w.pages))
