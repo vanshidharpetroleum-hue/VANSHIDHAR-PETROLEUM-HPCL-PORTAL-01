@@ -51,3 +51,14 @@ table{width:100%%;border-collapse:collapse;font-size:11.5px}th{background:#eef3f
 if extra: H+='<div class=small>Zyada jama (round-off): '+', '.join('%s ₹%s'%(n,inr(-v)) for n,v in extra)+'</div>'
 H+='<div class=small>Lena me: chalu udhar ₹91,766 + purana udhar 2021 (Tutu Singh 1,50,000, Roushan Singh 20,000) + party khate me zyada diya (Ravi Singh 14,443, J P Const 131). Dooars Construction dono list me hai, ek baar milan karna hai.</div></div></body></html>'
 open('lists.html','w').write(H); print(len(dena),D,len(lena),L,lena_party,extra)
+
+CSS=H[:H.index('<div class=hd>')]
+def page(title,sub,kpi,body):
+    return CSS+'<div class=hd><h1>%s</h1><div class=s>%s</div></div><div class=kpis>%s</div>%s</div></body></html>'%(title,sub,kpi,body)
+sub='Vanshidhar Petroleum, HPCL Pansa · 15-11-2026 tak · Register se'
+dh=page('PUMP KO DENA HAI - PARTY LIST',sub,'<div class=k>Kul dena (%d party)<b class=red>₹%s</b></div><div class=k>3%% byaj wale (Chotu, Gudu, Moon)<b class=red>₹%s</b></div>'%(len(dena),inr(D),inr(sum(v for n,v,_ in dena if n.upper() in interest))),
+  tbl(dena,'Party (kise dena hai)',D,dnote)+'<div class=small>Inse pump ne paisa liya hai (karja). 3% byaj wali party ko har mahina byaj dena padta hai. Dooars Construction lena list me bhi hai, milan baaki.</div>')
+chalu=sum(v for n,v,_ in lena if lnote(n) in ('Chalu udhar','Dena list me bhi hai - check'))
+lh=page('PUMP KO LENA HAI - UDHAR LIST',sub,'<div class=k>Kul lena (%d party)<b class=grn>₹%s</b></div><div class=k>Chalu udhar<b class=grn>₹%s</b></div><div class=k>Purana udhar (2021)<b>₹1,70,000</b></div>'%(len(lena)+len(lena_party),inr(L+LP),inr(chalu)),
+  tbl(lena+lena_party,'Party (kisse lena hai)',L+LP,lnote)+'<div class=small>Chalu udhar = Nov-2026 tak ka credit sale. Purana udhar 2021 ka hai. Dooars Construction dena list me bhi hai, milan baaki.</div>')
+open('dena.html','w').write(dh); open('lena.html','w').write(lh)
